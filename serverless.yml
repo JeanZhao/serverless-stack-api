@@ -1,0 +1,86 @@
+service: jean-app-api
+
+# Create an optimized package for our functions
+package:
+  individually: true
+
+plugins:
+  - serverless-bundle # Package our functions with Webpack
+  - serverless-offline
+  - serverless-dotenv-plugin # Load .env as environment variables
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: prod
+  region: ap-south-1
+
+  # These environment variables are made available to our functions
+  # under process.env.
+  environment:
+    tableName: user
+
+  # 'iamRoleStatements' defines the permission policy for the Lambda function.
+  # In this case Lambda functions are granted with permissions to access DynamoDB.
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:ap-south-1:*:*"
+
+functions:
+  create:
+    handler: create.main
+    events:
+      - http:
+          path: users
+          method: post
+          cors: true
+          authorizer: JeanZhao
+
+  get:
+    handler: get.main
+    events:
+      - http:
+          path: users/{id}
+          method: get
+          cors: true
+          authorizer: JeanZhao
+
+  list:
+    handler: list.main
+    events:
+      - http:
+          path: users
+          method: get
+          cors: true
+          authorizer: JeanZhao
+
+  update:
+    handler: update.main
+    events:
+      - http:
+          path: users/{id}
+          method: put
+          cors: true
+          authorizer: JeanZhao
+
+  delete:
+    handler: delete.main
+    events:
+      - http:
+          path: users/{id}
+          method: delete
+          cors: true
+          authorizer: JeanZhao
+
+# Create our resources with separate CloudFormation templates
+resources:
+  # API Gateway Errors
+  - ${file(resources/api-gateway-errors.yml)}
