@@ -13,7 +13,7 @@
     "url": "https://github.com:JeanZhao/serverless-stack-api.git"
   },
   "devDependencies": {
-    "aws-sdk": "^2.684.0",
+    "aws-sdk": "^2.1414.0",
     "jest": "^26.0.1",
     "serverless-bundle": "^1.2.5",
     "serverless-dotenv-plugin": "^2.1.1",
